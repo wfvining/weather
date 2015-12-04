@@ -3,6 +3,7 @@
 """
 import sys
 import cPickle
+import json
 from datetime import datetime
 
 field_names = ['station', 'wban', 'date', 'temp', 'tempcount',
@@ -83,8 +84,8 @@ def month(date):
 def day(date):
     return date.timetuple().tm_yday
 
-def output(key, value):
-    print('\t'.join(str(key), json.dumps(val)))
+def output(key, val):
+    print('\t'.join([str(key), json.dumps(val)]))
 
 # the reducer should get a list of values for each field for each for
 # each station.  It will take the list and do spline (or maybe linear)
@@ -108,5 +109,5 @@ if __name__ == '__main__':
                'hail':had_hail(observation),
                'thunder':had_thunder(observation),
                'tornado':had_tornado(observation)}
-        output(key, value)
+        output(key, val)
                
