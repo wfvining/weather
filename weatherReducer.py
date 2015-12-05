@@ -108,7 +108,7 @@ def fill_boolean_features(values_dict):
     values_dict['hail'] = sort_with(known_days, hail)
     values_dict['fog']  = sort_with(known_days, fog)
     values_dict['thunder'] = sort_with(known_days, thunder)
-    values_dict['tornado'] = sork_with(known_days, tornado)        
+    values_dict['tornado'] = sort_with(known_days, tornado)        
 
 def enough_data(values):
     return all([len(data) > data_threshold for data in [values['temp'],
@@ -120,7 +120,7 @@ def output(year, values_dict, lat, lon):
     key_prefix = ','.join([str(lat), str(lon), str(year)])
     for day in range(1, 366):
         key = key_prefix + str(day)
-        val = { feat:values_dict[feat][day] for feat in weather_features }
+        val = { feat:values_dict[feat][day-1] for feat in weather_features }
         print('\t'.join([key, json.dumps(val)]))    
 
 # for each station/year:
@@ -145,7 +145,7 @@ if __name__ == '__main__':
 
         if station is None:
             station = station_id
-            year = y
+            year = y[0:-1] # janky parsing for extra parens from map phase
             values_dict = new_values()
             latitude = fields['lat']
             longitude = fields['lon']
@@ -155,7 +155,7 @@ if __name__ == '__main__':
                 fill_boolean_features(values_dict)
                 output(year, values_dict, latitude, longitude)
             station = station_id
-            year = y
+            year = y[0:-1]
             values_dict = new_values()
             latitude = fields['lat']
             longitude = fields['lon']
