@@ -72,11 +72,11 @@ def interpolate(values_dict):
     # use the max for snow depth
     snow_depth_interp = interpolate_data('snow_depth', values_dict,
                                          max(values_dict['snow_depth']))
-    days = range(1, 367)
-    values_dict['temp'] = [temp_interp(day) for day in days]
-    values_dict['precipitation'] = [precip_interp(day) for day in days]
-    values_dict['dew_point'] = [dew_point_interp(day) for day in days]
-    values_dict['snow_depth'] = [snow_depth_interp(day) for day in days]
+    days = range(1, 366)
+    values_dict['temp'] = list(temp_interp(days))
+    values_dict['precipitation'] = list(precip_interp(days))
+    values_dict['dew_point'] = list(dew_point_interp(days))
+    values_dict['snow_depth'] = list(snow_depth_interp(days))
     
 def enough_data(values):
     return all([len(data) > data_threshold for data in [values['temp'],
@@ -86,10 +86,10 @@ def enough_data(values):
 
 def output(year, values_dict, lat, lon):
     key_prefix = ','.join([str(lat), str(lon), str(year)])
-    for day in range(1, 367):
+    for day in range(1, 366):
         key = key_prefix + str(day)
         val = { feat:values_dict[feat][day] for feat in weather_features }
-        print('\t'.join(key, json.dumps(val)))    
+        print('\t'.join([key, json.dumps(val)]))    
 
 # for each station/year:
 # 1. combine all temperatures into a list
@@ -103,24 +103,30 @@ if __name__ == '__main__':
     station = None
     year = None
     values_dict = {}
+    latitude = 0.0
+    longitude = 0.0
     for line in sys.stdin:
         key, value = line.split('\t')
         stn, wban, y = key.split(',')
         station_id = stn+wban
+        fields = json.loads(value)
 
         if station is None:
             station = station_id
             year = y
             values_dict = new_values()
+            latitude = fields['lat']
+            longitude = fields['lon']
         elif station != station_id:
             if enough_data(values_dict):
                 interpolate(values_dict)
-                output(year, values_dict)
+                output(year, values_dict, latitude, longitude)
             station = station_id
             year = y
             values_dict = new_values()
+            latitude = fields['lat']
+            longitude = fields['lon']
         # add the next values to the list...
-        fields = json.loads(value)
         add_value('temp', fields, values_dict)
         add_value('dew_point', fields, values_dict)
         add_value('precipitation', fields, values_dict)
