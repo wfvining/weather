@@ -152,6 +152,7 @@ if __name__ == '__main__':
         elif station != station_id:
             if enough_data(values_dict):
                 interpolate(values_dict)
+                fill_boolean_features(values_dict)
                 output(year, values_dict, latitude, longitude)
             station = station_id
             year = y
