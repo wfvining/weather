@@ -14,6 +14,9 @@ undefined_values = {'temp':9999.9,
                     'hail':None,
                     'tornado':None}
 
+weather_features = ['temp', 'precipitation', 'dew_point', 'snow_depth',
+                    'fog', 'rain', 'snow', 'thunder', 'hail', 'tornado']
+
 data_threshold = 150
 
 def new_values():
@@ -80,6 +83,13 @@ def enough_data(values):
                                                         values['precipitation'],
                                                         values['dew_point'],
                                                         values['snow_depth']]])
+
+def output(year, values_dict, lat, lon):
+    key_prefix = ','.join([str(lat), str(lon), str(year)])
+    for day in range(1, 367):
+        key = key_prefix + str(day)
+        val = { feat:values_dict[feat][day] for feat in weather_features }
+        print('\t'.join(key, json.dumps(val)))    
 
 # for each station/year:
 # 1. combine all temperatures into a list
