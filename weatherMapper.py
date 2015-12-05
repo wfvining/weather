@@ -6,12 +6,6 @@ import cPickle
 import json
 from datetime import datetime
 
-field_names = ['station', 'wban', 'date', 'temp', 'tempcount',
-               'dew_point', 'dwpcount', 'slp', 'slpcount', 'stp',
-               'stpcount', 'visibility', 'vsbcount', 'wind_speed',
-               'wspcount', 'max_speed', 'gust', 'max', 'min',
-               'precipitation', 'snow_depth', 'frshtt']
-
 def get_station_id(line):
     return (int(line[0:6]), int(line[7:12]))
 
@@ -52,7 +46,11 @@ def get_mintemp(line):
     return float(line[110:116])
 
 def get_precipitation(line):
-    return float(line[118:123])
+    precip_str = line[118:123]
+    if precip_str == "99.99":
+        return 0.0
+    else:
+        return float(precip_str)
 
 def get_snowdepth(line):
     sndp_str = line[125:130]
@@ -101,6 +99,7 @@ if __name__ == '__main__':
         val = {'lat':station['lat'], 'lon':station['lon'],
                'day':day(date),
                'temp':get_temp(observation),
+               'dew_point':get_dewpoint(observation),
                'precipitation':get_precipitation(observation),
                'snow_depth':get_snowdepth(observation),
                'fog':had_fog(observation),
