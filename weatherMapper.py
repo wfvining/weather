@@ -94,6 +94,8 @@ if __name__ == '__main__':
     for observation in sys.stdin:
         date = get_date(observation)
         station_id = get_station_id(observation)
+        if station_id not in station_index:
+            continue
         station = station_index[station_id]
         key = (station_id, year(date))
         val = {'lat':station['lat'], 'lon':station['lon'],
