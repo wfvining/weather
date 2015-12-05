@@ -11,6 +11,7 @@ undefined_values = {'temp':9999.9,
                     'rain':None,
                     'snow':None,
                     'thunder':None,
+                    'hail':None,
                     'tornado':None}
 
 data_threshold = 150
@@ -18,8 +19,8 @@ data_threshold = 150
 def new_values():
     return {'temp':[],
             'temp_days':[],
-            'precip':[],
-            'precip_days':[],
+            'precipitation':[],
+            'precipitation_days':[],
             'dew_point':[],
             'dew_point_days':[],
             'snow_depth':[],
@@ -35,23 +36,23 @@ def new_values():
             'thunder':[],
             'thunder_days':[],
             'tornado':[],
-            'tornaod_days':[]}
+            'tornado_days':[]}
 
 def append_value(fieldName, fields, values_dict):
     values_dict[fieldName].append(fields[fieldName])
     values_dict[fieldName+'_days'].append(fields['day'])
 
 def add_value(fieldName, fields, values_dict):
-    if undefined[fieldName] is None:
+    if undefined_values[fieldName] is None:
         append_value(fieldName, fields, values_dict)
-    elif fields[fieldName] != undefined[fieldName]:
+    elif fields[fieldName] != undefined_values[fieldName]:
         append_value(fieldName, fields, values_dict)
 
 def interpolate_data(fieldName, values, fill):
     return interp1d(values[fieldName+'_days'],
                     values[fieldName],
                     kind='cubic',
-                    bound_error=False,
+                    bounds_error=False,
                     fill_value=fill)
         
 def interpolate(values_dict):
@@ -93,8 +94,10 @@ if __name__ == '__main__':
     year = None
     values_dict = {}
     for line in sys.stdin:
-        (station_id, y), value = line.split('\t')
-        
+        key, value = line.split('\t')
+        stn, wban, y = key.split(',')
+        station_id = stn+wban
+
         if station is None:
             station = station_id
             year = y
@@ -107,7 +110,7 @@ if __name__ == '__main__':
             year = y
             values_dict = new_values()
         # add the next values to the list...
-        fields = json.dumps(value)
+        fields = json.loads(value)
         add_value('temp', fields, values_dict)
         add_value('dew_point', fields, values_dict)
         add_value('precipitation', fields, values_dict)
