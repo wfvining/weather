@@ -54,7 +54,6 @@ def add_value(fieldName, fields, values_dict):
 def interpolate_data(fieldName, values, fill):
     return interp1d(values[fieldName+'_days'],
                     values[fieldName],
-                    kind='cubic',
                     bounds_error=False,
                     fill_value=fill)
         
@@ -151,9 +150,12 @@ if __name__ == '__main__':
             longitude = fields['lon']
         elif station != station_id:
             if enough_data(values_dict):
-                interpolate(values_dict)
-                fill_boolean_features(values_dict)
-                output(year, values_dict, latitude, longitude)
+                try:
+                    interpolate(values_dict)
+                    fill_boolean_features(values_dict)
+                    output(year, values_dict, latitude, longitude)
+                except(LinAlgError):
+                    pass
             station = station_id
             year = y[0:-1]
             values_dict = new_values()
