@@ -17,7 +17,7 @@ undefined_values = {'temp':9999.9,
 weather_features = ['temp', 'precipitation', 'dew_point', 'snow_depth',
                     'fog', 'rain', 'snow', 'thunder', 'hail', 'tornado']
 
-data_threshold = 150
+data_threshold = 200
 
 def new_values():
     return {'temp':[],
@@ -77,7 +77,39 @@ def interpolate(values_dict):
     values_dict['precipitation'] = list(precip_interp(days))
     values_dict['dew_point'] = list(dew_point_interp(days))
     values_dict['snow_depth'] = list(snow_depth_interp(days))
+
+def sort_with(idxs, vals):
+    return [x for i, x in sorted(zip(idxs, vals), key=lambda pair:pair[0])]
     
+# there are a couple ways to do this... just fill in with 0s or
+# ... fill with the same distribution as is already present in the
+# data.
+# I'm using the strategey where I fill everything with zeroes
+def fill_boolean_features(values_dict):
+    # rain_days is the same as all other days sets for boolean features.
+    known_days = values_dict['rain_days']
+    rain = values_dict['rain']
+    snow = values_dict['snow']
+    fog  = values_dict['fog']
+    hail = values_dict['hail']
+    thunder = values_dict['thunder']
+    tornado = values_dict['tornado']
+    for d in range(1, 366):
+        if d not in known_days:
+            known_days.append(d)
+            rain.append(0)
+            snow.append(0)
+            fog.append(0)
+            hail.append(0)
+            thunder.append(0)
+            tornado.append(0)
+    values_dict['rain'] = sort_with(known_days, rain)
+    values_dict['snow'] = sort_with(known_days, snow)
+    values_dict['hail'] = sort_with(known_days, hail)
+    values_dict['fog']  = sort_with(known_days, fog)
+    values_dict['thunder'] = sort_with(known_days, thunder)
+    values_dict['tornado'] = sork_with(known_days, tornado)        
+
 def enough_data(values):
     return all([len(data) > data_threshold for data in [values['temp'],
                                                         values['precipitation'],
