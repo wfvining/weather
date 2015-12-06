@@ -89,7 +89,7 @@ def make_snow_vectors(lat_lon, block_generators):
                                           in block_generators.keys()]]
             all_features = snow_features
             for fv in features:
-                all_features.append(fv)
+                all_features = all_features + fv
                 
             svm_string = str(snowpack) + '\t'
             for (i, val) in enumerate(all_features):
