@@ -93,7 +93,7 @@ def longest_run(dv):
             if current_run > longest_run:
                 longest_run = current_run
             current_run = 0
-        elif:
+        else:
             current_run += 1
     return longest_run
 
