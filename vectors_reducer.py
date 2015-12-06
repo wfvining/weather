@@ -123,7 +123,7 @@ if __name__ == '__main__':
     #      the maximum snow pack
     #      the number of snow days
     lat_lon, observation = sys.stdin.readline().split('\t')
-    record_observations(observartion)
+    record_observations(observation)
     
     for line in sys.stdin:
         key, observations = line.split('\t')
