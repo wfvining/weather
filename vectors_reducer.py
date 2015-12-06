@@ -16,6 +16,7 @@ rain = []
 snow = []
 hail = []
 thunder = []
+tornado = []
 
 def reset_state():
     temperature = []
@@ -27,6 +28,7 @@ def reset_state():
     snow = []
     hail = []
     thunder = []
+    tornado = []
 
 def record_observations(observations):
     day = observations['day']
@@ -34,14 +36,14 @@ def record_observations(observations):
     date = year * 1000 + day
     temperature.append((date, observations['temp']))
     precipitation.append((date, observations['precipitation']))
-    snow_deth.append((date, observations['snow_depth']))
+    snow_depth.append((date, observations['snow_depth']))
     dew_point.append((date, observations['dew_point']))
     fog.append((date, observations['fog']))
     rain.append((date, observations['rain']))
     snow.append((date, observations['snow']))
     thunder.append((date, observations['thunder']))
     hail.append((date, observations['hail']))
-    tornado.append((date, observateions['tornado']))
+    tornado.append((date, observations['tornado']))
 
 def get_blocks(num_blocks, size, data):
     blocks = [x * size for x in range(0, num_blocks)]
@@ -77,7 +79,7 @@ def make_snow_vectors(lat_lon, block_generators):
         snow_features = s1 + s2
         features = [f1 + f2
                     for f1, f2, _ in [next(block_generators[feature])
-                                      for fearure in block_generators.keys()]]
+                                      for feature in block_generators.keys()]]
         all_features = snow_features
         for fv in features:
             all_features.append(fv)
@@ -86,8 +88,8 @@ def make_snow_vectors(lat_lon, block_generators):
         for (i, val) in enumerate(all_features):
             svm_string = svm_string + str(i+1) + ':' + str(val) + ' '
         lat, lon = lat_lon.split(',')
-        print(svm_string+str(len(all_features+1))+':'+lat
-              +' '+str(len(all_features+2))+':'+lon)
+        print(svm_string+str(len(all_features)+1)+':'+lat
+              +' '+str(len(all_features)+2)+':'+lon)
             
 def output_vectors(lat_lon, temp, precip, snow_depth, dew_point,
                    fog, rain, snow, hail, thunder, tornado):
@@ -124,7 +126,7 @@ if __name__ == '__main__':
     #      the number of snow days
     lat_lon, observation = sys.stdin.readline().split('\t')
     observations = json.loads(observation)
-    record_observations(observartions)
+    record_observations(observations)
     
     for line in sys.stdin:
         key, observations = line.split('\t')
