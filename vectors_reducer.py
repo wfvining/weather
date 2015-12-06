@@ -82,11 +82,12 @@ def make_snow_vectors(lat_lon, block_generators):
                                       for feature in block_generators.keys()]]
         all_features = snow_features
         for fv in features:
-            all_features.append(fv)
+            all_features = all_features + fv
 
         svm_string = str(snowpack) + '\t'
         for (i, val) in enumerate(all_features):
-            svm_string = svm_string + str(i+1) + ':' + str(val) + ' '
+            if val != 0:
+                svm_string = svm_string + str(i+1) + ':' + str(val) + ' '
         lat, lon = lat_lon.split(',')
         print(svm_string+str(len(all_features)+1)+':'+lat
               +' '+str(len(all_features)+2)+':'+lon)
