@@ -123,10 +123,12 @@ if __name__ == '__main__':
     #      the maximum snow pack
     #      the number of snow days
     lat_lon, observation = sys.stdin.readline().split('\t')
-    record_observations(observation)
+    observations = json.loads(observation)
+    record_observations(observartions)
     
     for line in sys.stdin:
         key, observations = line.split('\t')
+        observations = json.loads(observations)
         if key != lat_lon:
             output_vectors(lat_lon,
                            sorted(temperature, key=first),
