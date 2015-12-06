@@ -72,34 +72,74 @@ def make_block_generators(temp, precip, snow_depth, dew_point,
             'snow_depth':snow_depth_blocks,
             'dew_point':dew_point_blocks,
             'fog':fog_blocks,
+            'snow':snow_blocks,
             'rain':rain_blocks,
             'hail':hail_blocks,
             'thunder':thunder_blocks,
             'tornado':tornado_blocks}
+
+def count_days(dv):
+    count = 0
+    for x in dv:
+        if x == 1:
+            count += 1
+    return count
+
+def longest_run(dv):
+    longest_run = 0
+    current_run = 0
+    for x in dv:
+        if x == 0:
+            if current_run > longest_run:
+                longest_run = current_run
+            current_run = 0
+        elif:
+            current_run += 1
+    return longest_run
+
+def make_weather_events(fog, hail, thunder, snow, rain, tornado):
+    hail = [count_days(hail), longest_run(hail)]
+    fog  = [count_days(fog), longest_run(fog)]
+    thunder = [count_days(thunder), longest_run(thunder)]
+    snow = [count_days(snow), longest_run(snow)]
+    rain = [count_days(rain), longest_run(rain)]
+    tornado = [count_days(tornado), longest_run(tornado)]
+    return hail + fog + rain + thunder + rain + snow + tornado
 
 # I'm not really sure that I'm handling stop iteration in the correct way here.
 def make_snow_vectors(lat_lon, block_generators):
     for s1, s2, s3 in block_generators['snow_depth']:
         snowpack = numpy.mean(s3)
         snow_features = s1 + s2
-        try:
-            features = [f1 + f2
-                        for f1, f2, _ in [next(block_generators[feature])
-                                          for feature
-                                          in block_generators.keys()]]
-            all_features = snow_features
-            for fv in features:
-                all_features = all_features + fv
-                
-            svm_string = str(snowpack) + '\t'
-            for (i, val) in enumerate(all_features):
-                if val != 0:
-                    svm_string = svm_string + str(i+1) + ':' + str(val) + ' '
-            lat, lon = lat_lon.split(',')
-            print(svm_string+str(len(all_features)+1)+':'+lat
-                  +' '+str(len(all_features)+2)+':'+lon)
-        except StopIteration:
-            break
+
+        temp_vector = getvector('temp', block_generators)
+        precip_vector = get_vector('precip', block_generators)
+        dewpoint_vector = get_vevtor('dew_point', block_generators)
+        fog_vector = get_vector('fog', block_generators)
+        rain_vector = get_vector('rain', block_generators)
+        snowday_vector = get_vector('snow', block_generators)
+        hail_vector = get_vector('hail', block_generators)
+        thunder_vector = get_vector('thunder', block_generators)
+        tornado_vector = get_vector('tornado', block_generastors)
+
+        all_features = (snow_features + temp_vector + precip_vector
+                        + dewpoint_vector + fog_vector + rain_vector
+                        + hail_vector + snowday_vector + thunder_vector
+                        + tornado_vector)
+        weather_events_vector = make_weather_events(fog_vector,
+                                                    hail_vector,
+                                                    thunder_vector,
+                                                    snowday_vector,
+                                                    rain_vector,
+                                                    tornado_vector)
+        all_features = all_features + weather_events_vector
+        svm_string = str(snowpack) + '\t'
+        for (i, val) in enumerate(all_features):
+            if val != 0:
+                svm_string = svm_string + str(i+1) + ':' + str(val) + ' '
+        lat, lon = lat_lon.split(',')
+        print(svm_string+str(len(all_features)+1)+':'+lat
+              +' '+str(len(all_features)+2)+':'+lon)
             
 def output_vectors(lat_lon, temp, precip, snow_depth, dew_point,
                    fog, rain, snow, hail, thunder, tornado):
