@@ -106,13 +106,17 @@ def make_weather_events(fog, hail, thunder, snow, rain, tornado):
     tornado = [count_days(tornado), longest_run(tornado)]
     return hail + fog + rain + thunder + rain + snow + tornado
 
+def get_vector(block_generator):
+    b1, b2, b3 = next(block_generator)
+    return b1 + b2
+
 # I'm not really sure that I'm handling stop iteration in the correct way here.
 def make_snow_vectors(lat_lon, block_generators):
     for s1, s2, s3 in block_generators['snow_depth']:
         snowpack = numpy.mean(s3)
         snow_features = s1 + s2
 
-        temp_vector = getvector('temp', block_generators)
+        temp_vector = get_vector('temp', block_generators)
         precip_vector = get_vector('precip', block_generators)
         dewpoint_vector = get_vevtor('dew_point', block_generators)
         fog_vector = get_vector('fog', block_generators)
