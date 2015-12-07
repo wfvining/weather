@@ -118,7 +118,7 @@ def make_snow_vectors(lat_lon, block_generators):
 
         temp_vector = get_vector('temp', block_generators)
         precip_vector = get_vector('precip', block_generators)
-        dewpoint_vector = get_vevtor('dew_point', block_generators)
+        dewpoint_vector = get_vector('dew_point', block_generators)
         fog_vector = get_vector('fog', block_generators)
         rain_vector = get_vector('rain', block_generators)
         snowday_vector = get_vector('snow', block_generators)
