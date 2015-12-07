@@ -106,8 +106,8 @@ def make_weather_events(fog, hail, thunder, snow, rain, tornado):
     tornado = [count_days(tornado), longest_run(tornado)]
     return hail + fog + rain + thunder + rain + snow + tornado
 
-def get_vector(block_generator):
-    b1, b2, b3 = next(block_generator)
+def get_vector(feature, block_generator):
+    b1, b2, b3 = next(block_generator[feature])
     return b1 + b2
 
 # I'm not really sure that I'm handling stop iteration in the correct way here.
