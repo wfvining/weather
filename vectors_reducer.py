@@ -93,7 +93,7 @@ def longest_run(dv):
             if current_run > longest_run:
                 longest_run = current_run
             current_run = 0
-        elif:
+        else:
             current_run += 1
     return longest_run
 
@@ -124,7 +124,7 @@ def make_snow_vectors(lat_lon, block_generators):
         snowday_vector = get_vector('snow', block_generators)
         hail_vector = get_vector('hail', block_generators)
         thunder_vector = get_vector('thunder', block_generators)
-        tornado_vector = get_vector('tornado', block_generastors)
+        tornado_vector = get_vector('tornado', block_generators)
 
         all_features = (snow_features + temp_vector + precip_vector
                         + dewpoint_vector + fog_vector + rain_vector
