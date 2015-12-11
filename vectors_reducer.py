@@ -30,20 +30,20 @@ def reset_state():
     thunder = []
     tornado = []
 
-def record_observations(observations):
+def record_observations(observations, obs_dict):
     day = observations['day']
     year = observations['year']
     date = year * 1000 + day
-    temperature.append((date, observations['temp']))
-    precipitation.append((date, observations['precipitation']))
-    snow_depth.append((date, observations['snow_depth']))
-    dew_point.append((date, observations['dew_point']))
-    fog.append((date, observations['fog']))
-    rain.append((date, observations['rain']))
-    snow.append((date, observations['snow']))
-    thunder.append((date, observations['thunder']))
-    hail.append((date, observations['hail']))
-    tornado.append((date, observations['tornado']))
+    obs_dict['temperature'].append((date, observations['temp']))
+    obs_dict['precipitation'].append((date, observations['precipitation']))
+    obs_dict['snow_depth'].append((date, observations['snow_depth']))
+    obs_dict['dew_point'].append((date, observations['dew_point']))
+    obs_dict['fog'].append((date, observations['fog']))
+    obs_dict['rain'].append((date, observations['rain']))
+    obs_dict['snow'].append((date, observations['snow']))
+    obs_dict['thunder'].append((date, observations['thunder']))
+    obs_dict['hail'].append((date, observations['hail']))
+    obs_dict['tornado'].append((date, observations['tornado']))
 
 def get_blocks(size, data):
     b1 = 0
@@ -170,6 +170,18 @@ def output_vectors(lat_lon, temp, precip, snow_depth, dew_point,
     elif vector_type == 'snow_days':
         make_snow_days_vector(lat_lon, block_generators)
 
+def new_obs_dict():
+    return {'temperature':[],
+            'precipitation':[],
+            'snow_depth':[],
+            'dew_point':[],
+            'fog':[],
+            'rain':[],
+            'snow':[],
+            'hail':[],
+            'thunder':[],
+            'tornado':[]}
+        
 if __name__ == '__main__':
     vector_type = sys.argv[1]
     # read all data for a lat/lon in 30 day chunks.
@@ -178,25 +190,26 @@ if __name__ == '__main__':
     #      the average snow pack
     #      the maximum snow pack
     #      the number of snow days
+    obs_dict = new_obs_dict()
     lat_lon, observation = sys.stdin.readline().split('\t')
     observations = json.loads(observation)
-    record_observations(observations)
+    record_observations(observations, obs_dict)
     
     for line in sys.stdin:
         key, observations = line.split('\t')
         observations = json.loads(observations)
         if key != lat_lon:
             output_vectors(lat_lon,
-                           sorted(temperature, key=first),
-                           sorted(precipitation, key=first),
-                           sorted(snow_depth, key=first),
-                           sorted(dew_point, key=first),
-                           sorted(fog, key=first),
-                           sorted(rain, key=first),
-                           sorted(snow, key=first),
-                           sorted(hail, key=first),
-                           sorted(thunder, key=first),
-                           sorted(tornado, key=first))
-            reset_state()
-        record_observations(observations)
+                           sorted(obs_dict['temperature'], key=first),
+                           sorted(obs_dict['precipitation'], key=first),
+                           sorted(obs_dict['snow_depth'], key=first),
+                           sorted(obs_dict['dew_point'], key=first),
+                           sorted(obs_dict['fog'], key=first),
+                           sorted(obs_dict['rain'], key=first),
+                           sorted(obs_dict['snow'], key=first),
+                           sorted(obs_dict['hail'], key=first),
+                           sorted(obs_dict['thunder'], key=first),
+                           sorted(obs_dict['tornado'], key=first))
+            obs_dict = new_obs_dict()
+        record_observations(observations, obs_dict)
         
