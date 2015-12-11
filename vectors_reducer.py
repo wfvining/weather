@@ -5,31 +5,6 @@ import scipy
 
 first = lambda x: x[0]
 
-# State
-vector_type = 'snow'
-temperature = []
-precipitation = []
-snow_depth = []
-dew_point = []
-fog = []
-rain = []
-snow = []
-hail = []
-thunder = []
-tornado = []
-
-def reset_state():
-    temperature = []
-    precipitation = []
-    snow_depth = []
-    dew_point = []
-    fog = []
-    rain = []
-    snow = []
-    hail = []
-    thunder = []
-    tornado = []
-
 def record_observations(observations, obs_dict):
     day = observations['day']
     year = observations['year']
